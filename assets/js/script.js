@@ -1,61 +1,113 @@
-var currentDay = $('#currentDay');
-var dayplannertable = $('#dayplaner');
-var today=moment();
-const starthour=9;
-const endhour=17;
-var currenthour=0;
-function CurrentDayUpdate()
-{
-    currenthour=today.format("hh");
-    currentDay.text(today.format("MMM Do, YYYY"))
-    console.log(currenthour);
-    loadTable();
-    return;
-}
-function loadTable()
-{
-for(var i=starthour;i<=endhour;i++)
-{
+var currentDay = $("#currentDay");
+var dayplannertable = $("#dayplaner");
+var today = moment();
+const starthour = 9;
+const endhour = 17;
+var currenthour = 0;
 
-    // /moment('09:00','h:mm a').format('h:mm a');
-    var calendertime=moment(`${i}:00`,'hh:mm');
-    console.log(calendertime.format('MMMM Do YYYY, h:mm:ss a'))
-    var tr=$('<tr>');
-    var td1=$('<td>');
-    td1.addClass('column-1');
-    var td2=$('<td>');
-    td2.addClass('column-2');
-    if(i==currenthour)
-    {
-        td2.addClass('present');
+function CurrentDayUpdate() {
+  currenthour = today.format("HH");
+  loadTable();
+  setInterval(function () {
+    currentDay.text(today.format("MMM Do, YYYY"));
+    if (today.format("HH") != currenthour) {
+      currenthour = today.format("HH");
+      loadTable();
     }
-    else if(i<currenthour)
-    {
-        td2.addClass('past');
-    }
-    else{
-        td2.addClass('future');
-    }
-    td1.text(calendertime.format('h:mm a'));
-    var td3=$('<td>');
-    var button=$('<button>');
-    button.addClass('btnsave');
-    var svg=$('<svg>');
-    svg.attr('xmlns', 'http://www.w3.org/2000/svg');
-    svg.attr('width', '16');
-    svg.attr('height', '16');
-    svg.attr('fill', 'currentColor');
-    svg.attr('class', 'bi bi-save');
-    svg.attr('viewBox', '0 0 16 16');
-    var path=$('<path>');
-    path.attr('d', 'M2 1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H9.5a1 1 0 0 0-1 1v7.293l2.646-2.647a.5.5 0 0 1 .708.708l-3.5 3.5a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L7.5 9.293V2a2 2 0 0 1 2-2H14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h2.5a.5.5 0 0 1 0 1H2z');
-    svg.append(path);
-    //button.append(svg);
-    button.text("Save")
-    td3.append(button);
-    tr.append(td1,td2,td3);
+  }, 1000);
+
+  return;
+}
+function CreatRow(i) {
+  var calendertime = moment(`${i}:00`, "HH:mm");
+  var plan = GetData(calendertime.format("h:mm a"));
+
+  var tr = $("<tr>");
+  var td1 = $("<td>").addClass("column-1").text(calendertime.format("h:mm a"));
+
+  var td2 = $("<td>").addClass("column-2").text(plan);
+  console.log("i= " + i);
+  console.log("currenthour= " + currenthour);
+  if (i == currenthour) {
+    td2.addClass("present");
+  } else if (i < currenthour) {
+    td2.addClass("past");
+  } else {
+    td2.addClass("future");
+    td2.on("click", ColumnClick);
+  }
+
+  var td3 = $("<td>");
+  var button = $("<button>");
+  button.addClass("btnsave").attr("data-time", calendertime.format("h:mm a"));
+  button.on("click", SaveButtonClick);
+
+  button.text("Save");
+  td3.append(button);
+
+  button.attr("disabled", "disabled");
+  td3.addClass("column-3");
+  tr.append(td1, td2, td3);
+
+  return tr;
+}
+function loadTable() {
+  $("#dayplaner tr").remove();
+
+  for (var i = starthour; i <= endhour; i++) {
+    var tr = CreatRow(i);
     dayplannertable.append(tr);
+  }
+  return;
 }
-    return;
+function ColumnClick(event) {
+  var nexttd = $(event.target).siblings(".column-3");
+  var tds = $(event.target).children();
+
+  if (tds.length == 0) {
+    var input = $("<input>").attr("type", "text").attr("class", "form-control");
+    var button = nexttd.children();
+    button.removeAttr("disabled");
+    $(event.target).append(input);
+    input.on("change", InputTextChange);
+    input.focus();
+  }
 }
+function InputTextChange(event) {
+  var plan = $(event.target).val();
+  var datetime = $(event.target).parent().siblings(".column-1").text();
+  SaveData(datetime, plan);
+}
+function SaveButtonClick(event) {
+  var button = $(event.target);
+  var datetime = button.attr("data-time");
+  var nexttd = $(event.target).parent().prev();
+  var textinput = nexttd.children();
+  if (isEmpty(textinput.val())) {
+  } else {
+    SaveData(datetime, textinput.val());
+  }
+
+  return;
+}
+function isEmpty(value) {
+  return value == undefined || value == null || value.length === 0;
+}
+function SaveData(datetime, description) {
+  console.log("datett : " + datetime);
+  var plan = localStorage.getItem(datetime);
+
+  if (isEmpty(plan)) {
+    localStorage.setItem(datetime, description);
+  } else {
+    localStorage.setItem(datetime, plan + " " + description);
+  }
+  loadTable();
+  return;
+}
+function GetData(datetime) {
+  var plan = localStorage.getItem(datetime);
+  return plan;
+}
+
 CurrentDayUpdate();

@@ -12,21 +12,13 @@ textarea {
   border-left: 1px solid black;
   padding: 10px;
 }
-.future{
-background-color: #77dd77;
-}
-.present{
-background-color: #ff6961;
-}
-.past{
-background-color: antiquewhite;
-}
+
 .column-1
 {
 background-color: darkgrey;
 width: 15%;
 
-
+text-align: right;
 }
 .column-2
 {
@@ -43,6 +35,11 @@ color: white;
 width: 100%;
 height:  40px;
 }
+.btnsave i:hover {
+  font-size: 20px;
+  transition: all 0.3s ease-in-out;
+}
+
 .jumbotron {
   text-align: center;
   background-color: transparent;
@@ -85,6 +82,7 @@ height:  40px;
 .future {
   background-color: #77dd77;
   color: white;
+  cursor: pointer;
 }
 
 .saveBtn {
