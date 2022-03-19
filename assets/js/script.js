@@ -1,8 +1,8 @@
 var currentDay = $("#currentDay");
 var dayplannertable = $("#dayplaner");
 var today = moment();
-const starthour = 9;
-const endhour = 17;
+const starthour =12;
+const endhour = 19;
 var currenthour = 0;
 
 function CurrentDayUpdate() {
@@ -30,6 +30,7 @@ function CreatRow(i) {
   console.log("currenthour= " + currenthour);
   if (i == currenthour) {
     td2.addClass("present");
+    td2.on("click", ColumnClick);
   } else if (i < currenthour) {
     td2.addClass("past");
   } else {
@@ -41,14 +42,15 @@ function CreatRow(i) {
   var button = $("<button>");
   button.addClass("btnsave").attr("data-time", calendertime.format("h:mm a"));
   button.on("click", SaveButtonClick);
-
-  button.text("Save");
+var icon=$("<i>").attr("class","fas fa-save fa-lg")
+  //button.text("Save");
+  button.append(icon);
   td3.append(button);
 
   button.attr("disabled", "disabled");
   td3.addClass("column-3");
   tr.append(td1, td2, td3);
-
+// <i class="fa fa-folder"></i>
   return tr;
 }
 function loadTable() {
