@@ -1,8 +1,8 @@
 var currentDay = $("#currentDay");
 var dayplannertable = $("#dayplaner");
 var today = moment();
-const starthour = 12;
-const endhour = 19;
+const starthour = 9;
+const endhour = 17;
 var currenthour = 0;
 
 
