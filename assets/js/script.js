@@ -10,14 +10,15 @@ var currenthour = 0;
 function CurrentDayUpdate() {
   currenthour = today.format("HH");
   loadTable();
-  currentDay.text(today.format("MMM Do, YYYY"));
+  currentDay.text(today.format("MMM Do, YYYY h:mm:ss a"));
   setInterval(function () {
-    currentDay.text(today.format("MMM Do, YYYY"));
+    today = moment();
+    currentDay.text(today.format("MMM Do, YYYY h:mm:ss a"));
     if (today.format("HH") != currenthour) {
       currenthour = today.format("HH");
       loadTable();
     }
-  }, 600000);
+  }, 1000);
 
   return;
 }
